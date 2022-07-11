@@ -16,9 +16,11 @@ from gensim.summarization import keywords
 nltk.download('stopwords')
 try :
   nltk.data.find('tokenizers/punkt')
-  
+  nltk.download('omw-1.4')
+
 except LookupError:
   print('punkt')
+  nltk.download('omw-1.4')
   nltk.download('punkt')
 
 try :
@@ -58,14 +60,20 @@ def recognizing_text():
          #We noticed here that joining every new string to the base string was resulting in ram running out. Thus, we are using text file    
     print("Recognition Done")
     f.close()
+
+
 def punctuates(doo=True):
     if doo==True:
-        text=open("transcription.txt", "r")
-        text=text.read()
-        from punctuator import Punctuator
 
-        p = Punctuator('hel.pcl')
-        punctuated=p.punctuate(text)  
+        import requests
+
+        f = open("./transcription.txt", "r").read()
+        url = 'http://bark.phon.ioc.ee/punctuator'
+        myobj = {'text': f}
+        
+        x = requests.post(url, data = myobj)
+
+        punctuated = x.text  
         print("Punctuating Done")  
         return punctuated
     else:
@@ -116,7 +124,6 @@ def upload_file():
         return summary
 
     def finalsummary(punctuated):
-
         warnings.filterwarnings("ignore")
         documents = nltk.sent_tokenize(punctuated)
         tfidf_results = TfidfVectorizer(tokenizer = get_lemmatized_tokens, stop_words = stopwords.words('english')).fit_transform(documents)
@@ -130,5 +137,6 @@ def upload_file():
     lens=len(final)
     
     return render_template("summary.html",a=a,final=final,punctuated=text,lens=lens)
+
 if __name__ == '__main__':
    ui.run()    

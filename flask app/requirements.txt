@@ -1,0 +1,10 @@
+nltk
+flask
+flaskwebgui
+numpy==1.23.1
+gensim==3.6.0
+sklearn
+punctuator
+moviepy
+SpeechRecognition
+progress
